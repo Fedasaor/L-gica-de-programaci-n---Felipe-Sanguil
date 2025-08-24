@@ -3,6 +3,20 @@ from tkinter import messagebox
 import random
 import string
 
+# Función para validar que la longitud sea válida (solo números, entre 1 y 15)
+def validar_entrada(texto):
+    if texto == "":  # permitir campo vacío momentáneamente
+        return True
+    if texto.isdigit():  # solo números
+        valor = int(texto)
+        if 1 <= valor <= 15:  # rango permitido
+            return True
+        else:
+            messagebox.showwarning("Advertencia", "La longitud debe estar entre 1 y 15.")
+            return False
+    messagebox.showwarning("Advertencia", "Solo se permiten números en la longitud.")
+    return False
+
 # Función para generar la contraseña
 def generar_contraseña():
     longitud = int(spinbox_longitud.get())
@@ -10,6 +24,7 @@ def generar_contraseña():
     usar_numeros = var_numeros.get()
     usar_simbolos = var_simbolos.get()
 
+    # Construcción de los caracteres disponibles
     caracteres = ""
     if usar_letras:
         caracteres += string.ascii_letters
@@ -44,6 +59,7 @@ def generar_contraseña():
     with open("contraseña_generada.txt", "w") as archivo:
         archivo.write(contraseña)
 
+
 # Crear ventana principal
 ventana = tk.Tk()
 ventana.title("Generador Seguro de Contraseñas")
@@ -51,11 +67,14 @@ ventana.geometry("400x350")
 ventana.configure(bg="#e8f0fe")
 
 # Etiqueta de instrucción
-tk.Label(ventana, text="Parámetros de la contraseña", font=("Arial", 14), bg="#e8f0fe").pack(pady=10)
+tk.Label(ventana, text="Generador seguro de contraseñas", font=("Arial", 18), bg="#e8f0fe").pack(pady=10)
 
 # Longitud
 tk.Label(ventana, text="Longitud:", bg="#e8f0fe").pack()
-spinbox_longitud = tk.Spinbox(ventana, from_=4, to=32, width=5)
+
+# Validación para el Spinbox (solo 1–15, sin letras ni negativos)
+vcmd = (ventana.register(validar_entrada), "%P")
+spinbox_longitud = tk.Spinbox(ventana, from_=1, to=15, width=5, validate="key", validatecommand=vcmd)
 spinbox_longitud.pack()
 
 # Tipos de caracteres
